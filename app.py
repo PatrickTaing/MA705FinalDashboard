@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Dec 14 12:52:54 2022
-
 @author: Pat
 """
 
@@ -23,6 +21,15 @@ PAGE_SIZE = 5
 
 attrNames = sorted(set(df1.columns))
 attrNames.pop(attrNames.index('quality'))
+
+df1_s = [df1.loc[:,[attr_type,'quality']] for attr_type in attrNames]
+df2_s = [df1.loc[:,[attr_type,'quality']] for attr_type in attrNames]
+
+df1_s = [df.groupby([df.columns[0]]).mean().reset_index() for df in df1_s]
+df2_s = [df.groupby([df.columns[0]]).mean().reset_index() for df in df2_s]
+
+df1_s = pd.concat(df1_s)
+df2_s = pd.concat(df2_s)
 
 style_dict = dict(width='50%',
                   height='25px',
@@ -49,7 +56,7 @@ app.layout = html.Div([
                  value='alcohol',
                  style={'width': "30%", 'float': 'left'}
                  ),
-    html.H2("Line Graphs", style={'width': "100%",'text-align': 'center', 'font-family': 'verdana', 'float': 'left'}),
+    html.H2("Area Graphs", style={'width': "100%",'text-align': 'center', 'font-family': 'verdana', 'float': 'left'}),
     dcc.Graph(id='red-line', 
             style = {'width': "50%",'float':'left', 'border-color': 'gray', 'border-style': 'solid', 'border-right': 'none', 'border-left': 'none', 'border-size': 'thick'}),
     dcc.Graph(id='white-line', 
@@ -79,7 +86,7 @@ def update_genBar(attr_type):
     
     df = df.loc[:,[attr_type,'quality']]
 
-    fig = px.line(
+    fig = px.area(
         df.groupby([attr_type]).mean().reset_index(),
         x = attr_type,
         y = "quality",
@@ -100,6 +107,15 @@ def update_genBar(attr_type):
         bargap=0.2,
         yaxis_range=[0,10]
     )
+
+    fig.update_xaxes(
+        tickfont=dict(family='Calibri', color='darkred', size=15)
+    )
+
+    fig.update_yaxes(
+        tickfont=dict(family='Calibri', color='darkred', size=15)
+    )
+
     return fig
 
 # Generation bar chart update
@@ -113,7 +129,7 @@ def update_genBar(attr_type):
     
     df = df.loc[:,[attr_type,'quality']]
 
-    fig = px.line(
+    fig = px.area(
         df.groupby([attr_type]).mean().reset_index(),
         x = attr_type,
         y = "quality",
@@ -134,6 +150,15 @@ def update_genBar(attr_type):
         bargap=0.2,
         yaxis_range=[0,10]
     )
+
+    fig.update_xaxes(
+        tickfont=dict(family='Calibri', color='darkred', size=15)
+    )
+
+    fig.update_yaxes(
+        tickfont=dict(family='Calibri', color='darkred', size=15)
+    )
+
     return fig
 
 # Generation bar chart update
@@ -143,13 +168,13 @@ def update_genBar(attr_type):
 )
 def update_genBar(attr_type):
     
-    df = df1.copy()
+    df = df1_s.copy()
     
     fig = px.scatter(
-        df.groupby([attr_type]).mean().reset_index(),
+        df,
         x = df.columns,
         y = "quality",
-        title = attr_type.capitalize() + ' relation with Red Portugese Wine quality',
+        title = 'Red Portugese Wine quality',
         )
 
     fig.update_layout(
@@ -165,6 +190,15 @@ def update_genBar(attr_type):
         legend_title="Attributes",
         bargap=0.2,
     )
+
+    fig.update_xaxes(
+        tickfont=dict(family='Calibri', color='darkred', size=15)
+    )
+
+    fig.update_yaxes(
+        tickfont=dict(family='Calibri', color='darkred', size=15)
+    )
+
     return fig
 
 # Generation bar chart update
@@ -174,13 +208,13 @@ def update_genBar(attr_type):
 )
 def update_genBar(attr_type):
     
-    df = df2.copy()
+    df = df2_s.copy()
     
     fig = px.scatter(
-        df.groupby([attr_type]).mean().reset_index(),
+        df,
         x = df.columns,
         y = "quality",
-        title = attr_type.capitalize() + ' relation with White Portugese Wine quality',
+        title = 'White Portugese Wine quality',
         )
 
     fig.update_layout(
@@ -195,6 +229,14 @@ def update_genBar(attr_type):
         yaxis_title="Quality",
         legend_title="Attributes",
         bargap=0.2,
+    )
+
+    fig.update_xaxes(
+        tickfont=dict(family='Calibri', color='darkred', size=15)
+    )
+
+    fig.update_yaxes(
+        tickfont=dict(family='Calibri', color='darkred', size=15)
     )
     return fig
 
